@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 import os.path
 import json
-from model import Customers
+
+from model.Customer import Customer
+from services.CustomerService import CustomerService
 
 def create_app():
     app = Flask(__name__)
@@ -12,7 +14,7 @@ def create_app():
         with open(customer_file_path, 'w') as customer_file:
             json.dump({}, customer_file)
 
-    customers = Customers(customer_file_path)
+    customer_service = CustomerService(customer_file_path)
 
 
     @app.route('/')
@@ -24,32 +26,30 @@ def create_app():
     def create():
         customer_id = request.form['customer_id']
 
-        if customer_id in customers.data.keys():
-            flash('This customer ID already exists. Please create a new one.')
-            return redirect(url_for('home'))
-        else:
-            customers.create(
-                customer_id=customer_id,
-                first_name=request.form['first_name'],
-                last_name=request.form['last_name'],
-                company=request.form['company'],
-                address=request.form['address'],
-                sign_up_date=request.form['sign_up_date'],
-                email=request.form['email']
+        new_customer = Customer(
+            first_name=request.form['first_name'],
+            last_name=request.form['last_name'],
+            company=request.form['company'],
+            address=request.form['address'],
+            sign_up_date=request.form['sign_up_date'],
+            email=request.form['email']
             )
 
-            customers.save(customer_file_path)
-
+        try:
+            customer_service.create(customer_id, new_customer)
             return 'Customer ' + customer_id + ' has been created.'
+        except ValueError:
+            flash('This customer ID already exists. Please create a new one.')
+            return redirect(url_for('home'))
 
+    
 
     @app.route('/search', methods=['GET'])
     def search():
         customer_id = request.args['customer_id']
 
-        if customer_id in customers.data.keys():
-            result = customers.search(customer_id)
-
+        try:
+            result = customer_service.search(customer_id)
             return render_template(
                 'home.html', 
                 customer_id=customer_id,
@@ -59,7 +59,7 @@ def create_app():
                 address=result['address'], 
                 sign_up_date=result['sign_up_date'], 
                 email=result['email'])
-        else:
+        except KeyError:
             flash('This customer does not exist.')
             return redirect(url_for('home'))
 
@@ -68,34 +68,31 @@ def create_app():
     def update():
         customer_id = request.form['customer_id']
 
-        if customer_id in customers.data.keys():
-            customers.update(
-                customer_id=customer_id,
-                first_name=request.form['first_name'],
-                last_name=request.form['last_name'],
-                company=request.form['company'],
-                address=request.form['address'],
-                sign_up_date=request.form['sign_up_date'],
-                email=request.form['email']
+        updated_customer = Customer(
+            first_name=request.form['first_name'],
+            last_name=request.form['last_name'],
+            company=request.form['company'],
+            address=request.form['address'],
+            sign_up_date=request.form['sign_up_date'],
+            email=request.form['email']
             )
 
-            customers.save(customer_file_path)
-
+        try:
+            customer_service.update(customer_id, updated_customer)
             return "Customer " + customer_id + "'s info has been updated."
-        else:
+        except KeyError:
             flash('This customer does not exist.')
             return redirect(url_for('home'))
-        
+
 
     @app.route('/delete', methods=['POST'])
     def delete():
             customer_id = request.form['customer_id']
-            
-            if customer_id in customers.data.keys():
-                customers.delete(customer_id)
-                customers.save(customer_file_path)
+
+            try:
+                customer_service.delete(customer_id)
                 return "Customer " + customer_id + " has been deleted."
-            else:
+            except KeyError:
                 flash('This customer does not exist.')
                 return redirect(url_for('home'))
 
@@ -103,10 +100,12 @@ def create_app():
     @app.route('/api/search')
     def api_search():
             customer_id = request.args['customer_id']
-            
-            if customer_id in customers.data.keys():
-                return jsonify(customers.search(customer_id))
-            else:
+
+            try:
+                result = customer_service.search(customer_id)
+                return jsonify(result)
+            except KeyError:
                 return 'This customer does not exist.'
+
 
     return app
