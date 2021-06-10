@@ -1,7 +1,5 @@
 import json
 
-from model.Customer import Customer
-
 class CustomerService:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -13,15 +11,9 @@ class CustomerService:
         if customer_id in customers.keys():
             raise ValueError("This customer ID already exists. Please create a new one.")
 
-        customers[customer_id] = {
-            "first_name": customer.first_name,
-            "last_name": customer.last_name,
-            "company": customer.company,
-            "address": customer.address,
-            "sign_up_date": customer.sign_up_date,
-            "email": customer.email
-        }
-
+        customer.address = customer.address.__dict__
+        customers[customer_id] = customer.__dict__
+        
         self.save(customers)
 
 
@@ -37,15 +29,9 @@ class CustomerService:
 
         if customer_id not in customers.keys():
             raise KeyError("This customer does not exist.")
-        
-        customers[customer_id] = {
-            "first_name": customer.first_name,
-            "last_name": customer.last_name,
-            "company": customer.company,
-            "address": customer.address,
-            "sign_up_date": customer.sign_up_date,
-            "email": customer.email
-        }
+
+        customer.address = customer.address.__dict__
+        customers[customer_id] = customer.__dict__
 
         self.save(customers)
 

@@ -3,6 +3,7 @@ import os.path
 import json
 
 from model.Customer import Customer
+from model.Address import Address
 from services.CustomerService import CustomerService
 
 def create_app():
@@ -25,14 +26,20 @@ def create_app():
     @app.route('/create', methods=['POST'])
     def create():
         customer_id = request.form['customer_id']
-
         new_customer = Customer(
             first_name=request.form['first_name'],
             last_name=request.form['last_name'],
             company=request.form['company'],
-            address=request.form['address'],
             sign_up_date=request.form['sign_up_date'],
-            email=request.form['email']
+            email=request.form['email'],
+            address=Address(
+                request.form['line1'],
+                request.form['line2'],
+                request.form['city'],
+                request.form['province_state'],
+                request.form['postal_code'],
+                request.form['country'],
+            )
             )
 
         try:
@@ -47,7 +54,6 @@ def create_app():
     @app.route('/search', methods=['GET'])
     def search():
         customer_id = request.args['customer_id']
-
         try:
             result = customer_service.search(customer_id)
             return render_template(
@@ -56,9 +62,14 @@ def create_app():
                 first_name=result['first_name'], 
                 last_name=result['last_name'], 
                 company=result['company'], 
-                address=result['address'], 
                 sign_up_date=result['sign_up_date'], 
-                email=result['email'])
+                email=result['email'],
+                line1=result['address']['line1'],
+                line2=result['address']['line2'],
+                city=result['address']['city'],
+                province_state=result['address']['province_state'],
+                postal_code=result['address']['postal_code'],
+                country=result['address']['country'])
         except KeyError:
             flash('This customer does not exist.')
             return redirect(url_for('home'))
@@ -67,14 +78,20 @@ def create_app():
     @app.route('/update', methods=['POST'])
     def update():
         customer_id = request.form['customer_id']
-
         updated_customer = Customer(
             first_name=request.form['first_name'],
             last_name=request.form['last_name'],
             company=request.form['company'],
-            address=request.form['address'],
             sign_up_date=request.form['sign_up_date'],
-            email=request.form['email']
+            email=request.form['email'],
+            address=Address(
+                request.form['line1'],
+                request.form['line2'],
+                request.form['city'],
+                request.form['province_state'],
+                request.form['postal_code'],
+                request.form['country'],
+            )
             )
 
         try:
@@ -88,7 +105,6 @@ def create_app():
     @app.route('/delete', methods=['POST'])
     def delete():
             customer_id = request.form['customer_id']
-
             try:
                 customer_service.delete(customer_id)
                 return "Customer " + customer_id + " has been deleted."
@@ -100,7 +116,6 @@ def create_app():
     @app.route('/api/search')
     def api_search():
             customer_id = request.args['customer_id']
-
             try:
                 result = customer_service.search(customer_id)
                 return jsonify(result)

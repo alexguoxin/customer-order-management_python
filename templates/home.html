@@ -23,18 +23,41 @@
     <input type="text" name="company" value="">
     <br>
 
-    <label for="address">Address</label>
-    <input type="text" name="address" value="">
+    <label for="email">Email</label>
+    <input type="email" name="email" value="">
     <br>
 
     <label for="sign_up_date">Sign-up Date</label>
     <input type="date" name="sign_up_date" value="">
     <br>
 
-    <label for="email">Email</label>
-    <input type="email" name="email" value="">
+    <label>Address</label>
     <br>
 
+    <label for="line1">Line 1</label>
+    <input type="text" name="line1" value="">
+    <br>
+
+    <label for="line2">Line 2</label>
+    <input type="text" name="line2" value="">
+    <br>
+
+    <label for="city">City</label>
+    <input type="text" name="city" value="">
+    <br>
+
+    <label for="province_state">Province/State</label>
+    <input type="text" name="province_state" value="">
+    <br>
+
+    <label for="postal_code">Postal Code/Zipcode</label>
+    <input type="text" name="postal_code" value="">
+    <br>
+
+    <label for="country">Country</label>
+    <input type="text" name="country" value="">
+    <br>
+    
     <input type="submit" value="Create">
 </form>
 
@@ -67,16 +90,39 @@
     <input type="text" name="company" value="{{ company }}">
     <br>
 
-    <label for="address">Address</label>
-    <input type="text" name="address" value="{{ address }}">
+    <label for="email">Email</label>
+    <input type="email" name="email" value={{ email }}>
     <br>
 
     <label for="sign_up_date">Sign-up Date</label>
     <input type="date" name="sign_up_date" value={{ sign_up_date }}>
     <br>
 
-    <label for="email">Email</label>
-    <input type="email" name="email" value={{ email }}>
+    <label>Address</label>
+    <br>
+    
+    <label for="line1">Line 1</label>
+    <input type="text" name="line1" value="{{ line1 }}">
+    <br>
+
+    <label for="line2">Line 2</label>
+    <input type="text" name="line2" value="{{ line2 }}">
+    <br>
+
+    <label for="city">City</label>
+    <input type="text" name="city" value="{{ city }}">
+    <br>
+
+    <label for="province_state">Province/State</label>
+    <input type="text" name="province_state" value="{{ province_state }}">
+    <br>
+
+    <label for="postal_code">Postal Code/Zipcode</label>
+    <input type="text" name="postal_code" value="{{ postal_code }}">
+    <br>
+
+    <label for="country">Country</label>
+    <input type="text" name="country" value="{{ country }}">
     <br>
 
     <input type="submit" value="Update">
