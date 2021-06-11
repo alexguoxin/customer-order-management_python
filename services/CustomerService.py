@@ -1,42 +1,36 @@
 import json
 
+from utils import customer_to_dict
+
 class CustomerService:
     def __init__(self, file_path):
         self.file_path = file_path
 
 
-    def create(self, customer_id, customer):
+    def create_customer(self, customer):
         customers = self.load()
-
-        if customer_id in customers.keys():
+        if customer.id in customers.keys():
             raise ValueError("This customer ID already exists. Please create a new one.")
-
-        customer.address = customer.address.__dict__
-        customers[customer_id] = customer.__dict__
-        
+        customers[customer.id] = customer_to_dict(customer)
         self.save(customers)
 
 
-    def search(self, customer_id):
+    def search_customer(self, customer_id):
         customers = self.load()
         if customer_id not in customers.keys():
             raise KeyError("This customer does not exist.")
         return customers[customer_id]
 
 
-    def update(self, customer_id, customer):
+    def update_customer(self, customer):
         customers = self.load()
-
-        if customer_id not in customers.keys():
+        if customer.id not in customers.keys():
             raise KeyError("This customer does not exist.")
-
-        customer.address = customer.address.__dict__
-        customers[customer_id] = customer.__dict__
-
+        customers[customer.id] = customer_to_dict(customer)
         self.save(customers)
 
 
-    def delete(self, customer_id):
+    def delete_customer(self, customer_id):
         customers = self.load()
         if customer_id not in customers.keys():
             raise KeyError("This customer does not exist.")
