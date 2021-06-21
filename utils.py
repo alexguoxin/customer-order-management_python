@@ -1,8 +1,8 @@
 from model.Customer import Customer
 from model.Address import Address
 
-def dict_to_customer(dict):
-    address = Address(
+def dict_to_address(dict):
+    return Address(
         line1=dict['line1'],
         line2=dict['line2'],
         city=dict['city'],
@@ -11,6 +11,8 @@ def dict_to_customer(dict):
         country=dict['country']
         )
 
+def dict_to_customer(dict):
+    address = dict_to_address(dict)
     return Customer(
         id=dict['customer_id'],
         first_name=dict['first_name'],
@@ -21,7 +23,9 @@ def dict_to_customer(dict):
         address=address
         )
 
-def customer_to_dict(customer):
-    customer.address = customer.address.__dict__
-    return customer.__dict__
+def address_to_dict(address):
+    return address.__dict__
 
+def customer_to_dict(customer):
+    customer.address = address_to_dict(customer.address)
+    return customer.__dict__
